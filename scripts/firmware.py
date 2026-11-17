@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DEVICES = json.loads((ROOT / 'devices.json').read_text())
 REQUIRED = ('kmod-nft-tproxy', 'kmod-nft-socket', 'openssh-sftp-server',
             'kmod-nft-bridge', 'kmod-tun', 'luci')
+RE_CS_08_POLICY = json.loads((ROOT / 'configs/re-cs-08-packages.json').read_text())
 
 
 def run(*args):
@@ -54,6 +55,34 @@ def selected():
     return set(re.findall(r'^CONFIG_PACKAGE_(.+)=[ym]$', Path('.config').read_text(), re.M))
 
 
+def re_cs_08_roots():
+    return set(RE_CS_08_POLICY['openwrt_defaults'] + RE_CS_08_POLICY['hardware_support']) | set(REQUIRED)
+
+
+def re_cs_08_seed(lines, names):
+    roots = re_cs_08_roots()
+    assert not (missing := roots - names), f'Unknown package roots: {sorted(missing)}'
+    seed = [line for line in lines if not line.startswith('CONFIG_PACKAGE_')]
+    seed += ['# CONFIG_ALL is not set', 'CONFIG_USE_APK=y']
+    seed += [f'# CONFIG_PACKAGE_{p} is not set' for p in sorted(names - roots)]
+    seed += [f'CONFIG_PACKAGE_{p}=y' for p in sorted(roots)]
+    return '\n'.join(seed) + '\n'
+
+
+def check_re_cs_08(packages):
+    roots = re_cs_08_roots()
+    assert not (missing := roots - packages), f'Missing RE-CS-08 package roots: {sorted(missing)}'
+    allowed = set(RE_CS_08_POLICY['standard_luci_apps'] + RE_CS_08_POLICY['standard_luci_themes'])
+    extras = {p for p in packages if p.startswith(('luci-app-', 'luci-theme-')) and p not in allowed}
+    assert not extras, f'Nonstandard LuCI applications/themes: {sorted(extras)}'
+    # These are optional services, not dependencies of the standard router/LuCI set.
+    forbidden = {'autocore', 'automount', 'cpufreq', 'qca-ppe-qos', 'default-settings',
+                 'default-settings-chn', 'homeproxy', 'sing-box', 'samba4-server',
+                 'miniupnpd', 'miniupnpd-nftables', 'natmap', 'natmapt', 'gecoosac',
+                 'dnsmasq-full', 'luci-theme-vantage'}
+    assert not (bad := packages & forbidden), f'Unexpected optional services: {sorted(bad)}'
+
+
 def configure(device):
     d = DEVICES[device]
     lines = [f'CONFIG_TARGET_{d["target"]}=y',
@@ -64,6 +93,13 @@ def configure(device):
     lines += [f'CONFIG_PACKAGE_{p}=y' for p in REQUIRED]
     Path('.config').write_text('\n'.join(lines) + '\n')
     run('make', 'defconfig')
+    if device == 'jdcloud-re-cs-08':
+        # Start from OpenWrt roots, not the fork's package defaults. Kconfig
+        # selects dependencies of these roots; unrelated default-y packages stay off.
+        names = set(re.findall(r'^Package: (.+)$', Path('tmp/.packageinfo').read_text(), re.M))
+        Path('.config').write_text(re_cs_08_seed(lines, names))
+        run('make', 'defconfig')
+        check_re_cs_08(selected())
     if d['no_wifi']:
         # Read all known package names, including unselected defaults.
         names = set(re.findall(r'^Package: (.+)$', Path('tmp/.packageinfo').read_text(), re.M))
@@ -96,6 +132,8 @@ def verify(device):
     for manifest in manifests:
         packages = {line.split()[0] for line in manifest.read_text().splitlines() if line.strip()}
         assert not (missing := set(REQUIRED) - packages), f'{manifest}: missing {missing}'
+        if device == 'jdcloud-re-cs-08':
+            check_re_cs_08(packages)
         if d['no_wifi']:
             assert not (bad := sorted(p for p in packages if wireless(p))), f'{manifest}: wireless {bad}'
     print(f'Verified {device}: {len(profile["images"])} images and {len(manifests)} manifests')

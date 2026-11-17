@@ -6,6 +6,7 @@ on:
     paths:
       - .github/workflows/build-firmware.yml
       - devices.json
+      - configs/**
       - scripts/**
       - patches/**
   workflow_dispatch:
@@ -99,6 +100,7 @@ jobs:
           test "$(git -C source rev-parse HEAD)" = "$SOURCE_REVISION"
           mkdir -p diagnostics
           cp builder/devices.json diagnostics/
+          cp -a builder/configs diagnostics/
 
       - name: Update feeds and apply patches
         working-directory: source

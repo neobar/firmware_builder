@@ -21,6 +21,16 @@ LuCI 有线网络、状态和防火墙管理保留；无线状态功能不可用
 
 ## 运行
 
+RE-CS-08 使用 `configs/re-cs-08-packages.json` 中的 OpenWrt 默认基础/路由包，
+加上 RE-CS-08 必要的 PPE、PHY、交换端口、存储/启动支持及本项目要求的软件包。
+配置时显式关闭所有其他包的默认选择，然后由 Kconfig 自动拉取所需依赖，
+避免 ImmortalWrt 的默认插件及其独立服务被带入镜像。
+保留 OpenWrt 标准 LuCI 的 `luci-app-firewall`、`luci-app-package-manager` 和 Bootstrap 主题；
+移除 autoreboot、fullconenat-sonic、gecoosac、homeproxy、mini-diskmanager、natmapt、partexp、
+router-tool、samba4、upnp、vantage、wolultra 等额外应用和 Vantage 主题。
+基础选包同时恢复为 OpenWrt 的 dnsmasq、mbedTLS 和 apk-mbedtls。
+最终配置及安装 manifest 均禁止非标准 LuCI 应用/主题和常见额外服务。
+
 1. 将本目录全部文件提交到仓库根目录，包含隐藏目录 `.github`。
 2. 在仓库的 **Actions → Build router firmware → Run workflow** 选择设备。
 3. `all` 会分别构建上述四个项目。每项独立运行，单项失败不取消其他设备。同一设备选择的新构建会取消仍在运行的旧构建。
