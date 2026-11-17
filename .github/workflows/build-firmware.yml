@@ -11,12 +11,11 @@ on:
   workflow_dispatch:
     inputs:
       device:
-        description: Device to build (all includes both BPi-R4 Pro variants)
+        description: Device to build (all supported devices)
         type: choice
         default: all
         options:
           - all
-          - bpi-r4-pro-4e
           - bpi-r4-pro-8x
           - zbt-z8803be
           - gemtek-xr1710g
@@ -27,7 +26,7 @@ permissions:
 
 concurrency:
   group: firmware-${{ github.workflow }}-${{ github.ref }}-${{ inputs.device }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 defaults:
   run:

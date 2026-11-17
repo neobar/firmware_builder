@@ -6,13 +6,12 @@
 
 | Actions 选项 | 源码 | Target / Subtarget | 设备 Profile |
 | --- | --- | --- | --- |
-| bpi-r4-pro-4e | openwrt/openwrt | mediatek/filogic | bananapi_bpi-r4-pro-4e |
 | bpi-r4-pro-8x | openwrt/openwrt | mediatek/filogic | bananapi_bpi-r4-pro-8x |
 | zbt-z8803be | openwrt/openwrt | mediatek/filogic | zbtlink_zbt-z8803be |
 | gemtek-xr1710g | openwrt/openwrt + PR #26296 | airoha/an7581 | gemtek_xr1710g-ubi |
 | jdcloud-re-cs-08 | VIKINGYFY/immortalwrt，owrt 分支 | qualcommbe/ipq53xx | jdcloud_re-cs-08 |
 
-BPi-R4 Pro 的 4E、8X 分别生成固件，下载时请对应实际硬件。
+仅构建 BPi-R4 Pro 8X，不构建 4E。
 所有镜像均要求内置 `kmod-nft-tproxy`、`kmod-nft-socket`、`openssh-sftp-server`、`kmod-nft-bridge`、`kmod-tun`、`luci`。
 
 BPi-R4 Pro 禁用无线驱动、无线固件、wpad/hostapd、iw/iwinfo 等相关包，也移除 `mt7988-wo-firmware`。
@@ -24,7 +23,7 @@ LuCI 有线网络、状态和防火墙管理保留；无线状态功能不可用
 
 1. 将本目录全部文件提交到仓库根目录，包含隐藏目录 `.github`。
 2. 在仓库的 **Actions → Build router firmware → Run workflow** 选择设备。
-3. `all` 会分别构建上述五个项目。每项独立运行，单项失败不取消其他设备。
+3. `all` 会分别构建上述四个项目。每项独立运行，单项失败不取消其他设备。同一设备选择的新构建会取消仍在运行的旧构建。
 4. 成功后从该次运行的 **Artifacts** 下载 `firmware-设备名-运行编号`。
 5. `diagnostics-设备名-运行编号` 保存配置、源码及 feed 版本、补丁与日志，保留 14 天。
 

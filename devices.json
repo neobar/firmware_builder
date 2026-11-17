@@ -1,7 +1,34 @@
 {
-  "bpi-r4-pro-4e": {"repository": "openwrt/openwrt", "revision": "41a0aea338da58c6cdc6c4807e59cc52e2a78f50", "target": "mediatek", "subtarget": "filogic", "profile": "bananapi_bpi-r4-pro-4e", "no_wifi": true},
-  "bpi-r4-pro-8x": {"repository": "openwrt/openwrt", "revision": "41a0aea338da58c6cdc6c4807e59cc52e2a78f50", "target": "mediatek", "subtarget": "filogic", "profile": "bananapi_bpi-r4-pro-8x", "no_wifi": true},
-  "zbt-z8803be": {"repository": "openwrt/openwrt", "revision": "41a0aea338da58c6cdc6c4807e59cc52e2a78f50", "target": "mediatek", "subtarget": "filogic", "profile": "zbtlink_zbt-z8803be", "no_wifi": false},
-  "gemtek-xr1710g": {"repository": "openwrt/openwrt", "revision": "41a0aea338da58c6cdc6c4807e59cc52e2a78f50", "target": "airoha", "subtarget": "an7581", "profile": "gemtek_xr1710g-ubi", "no_wifi": false},
-  "jdcloud-re-cs-08": {"repository": "VIKINGYFY/immortalwrt", "revision": "fdb0dfb367bd50bc8773be63d227695bfeaf55d1", "target": "qualcommbe", "subtarget": "ipq53xx", "profile": "jdcloud_re-cs-08", "no_wifi": false}
+  "bpi-r4-pro-8x": {
+    "repository": "openwrt/openwrt",
+    "revision": "41a0aea338da58c6cdc6c4807e59cc52e2a78f50",
+    "target": "mediatek",
+    "subtarget": "filogic",
+    "profile": "bananapi_bpi-r4-pro-8x",
+    "no_wifi": true
+  },
+  "zbt-z8803be": {
+    "repository": "openwrt/openwrt",
+    "revision": "41a0aea338da58c6cdc6c4807e59cc52e2a78f50",
+    "target": "mediatek",
+    "subtarget": "filogic",
+    "profile": "zbtlink_zbt-z8803be",
+    "no_wifi": false
+  },
+  "gemtek-xr1710g": {
+    "repository": "openwrt/openwrt",
+    "revision": "41a0aea338da58c6cdc6c4807e59cc52e2a78f50",
+    "target": "airoha",
+    "subtarget": "an7581",
+    "profile": "gemtek_xr1710g-ubi",
+    "no_wifi": false
+  },
+  "jdcloud-re-cs-08": {
+    "repository": "VIKINGYFY/immortalwrt",
+    "revision": "fdb0dfb367bd50bc8773be63d227695bfeaf55d1",
+    "target": "qualcommbe",
+    "subtarget": "ipq53xx",
+    "profile": "jdcloud_re-cs-08",
+    "no_wifi": false
+  }
 }
