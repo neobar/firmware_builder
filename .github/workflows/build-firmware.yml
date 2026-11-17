@@ -26,7 +26,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: firmware-${{ github.workflow }}-${{ github.ref }}-${{ inputs.device }}
+  group: firmware-${{ github.workflow }}-${{ github.ref }}-${{ inputs.device || (startsWith(github.event.head_commit.message, '[re-cs-08]') && 'jdcloud-re-cs-08') || 'all' }}
   cancel-in-progress: true
 
 defaults:
@@ -42,7 +42,7 @@ jobs:
       - uses: actions/checkout@v4
       - id: matrix
         env:
-          DEVICE: ${{ inputs.device || 'all' }}
+          DEVICE: ${{ inputs.device || (startsWith(github.event.head_commit.message, '[re-cs-08]') && 'jdcloud-re-cs-08') || 'all' }}
         run: |
           python3 - <<'PY'
           import json, os
