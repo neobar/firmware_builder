@@ -1,0 +1,27 @@
+From: Arnau Valls <vallsfustearnau@gmail.com>
+Subject: [PATCH nf] netfilter: flowtable: remove hw flows before unbinding the flow block
+
+Source: https://lore.kernel.org/netfilter-devel/20261103222243.445644-1-vallsfustearnau@gmail.com/
+Mirror: https://lists.openwall.net/netdev/2026/11/03/920
+Issue: https://github.com/openwrt/openwrt/issues/17915#issuecomment-6617121046
+Fixes: 13210fc63f35 ("netfilter: nf_tables: imbalance in flowtable binding")
+Signed-off-by: Arnau Valls <vallsfustearnau@gmail.com>
+
+--- a/net/netfilter/nf_flow_table_offload.c
++++ b/net/netfilter/nf_flow_table_offload.c
+@@ -1259,6 +1259,15 @@ int nf_flow_table_offload_setup(struct nf_flowtable *flowtable,
+ 	if (!nf_flowtable_hw_offload(flowtable))
+ 		return nf_flow_offload_xdp_setup(flowtable, dev, cmd);
+ 
++	/* Flush this device's hw flows while the driver is still bound. The
++	 * second gc pass catches flows skipped due to pending offload work.
++	 */
++	if (cmd == FLOW_BLOCK_UNBIND) {
++		nf_flow_table_gc_cleanup(flowtable, dev);
++		nf_flow_table_gc_run(flowtable);
++		nf_flow_table_offload_flush(flowtable);
++	}
++
+ 	if (dev->netdev_ops->ndo_setup_tc)
+ 		err = nf_flow_table_offload_cmd(&bo, flowtable, dev, cmd,
+ 						&extack);
