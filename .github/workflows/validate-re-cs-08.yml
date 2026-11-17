@@ -1,0 +1,66 @@
+name: Validate RE-CS-08 config fix
+on:
+  push:
+    branches: [fix/re-cs-08-config]
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install config prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential flex bison gawk libncurses-dev libssl-dev python3 python3-setuptools rsync unzip zlib1g-dev file wget subversion swig
+      - name: Fetch firmware source
+        run: |
+          revision=$(python3 -c 'import json; print(json.load(open("devices.json"))["jdcloud-re-cs-08"]["revision"])')
+          git init source
+          git -C source remote add origin https://github.com/VIKINGYFY/immortalwrt.git
+          git -C source fetch --depth=1 origin "$revision"
+          git -C source checkout --detach FETCH_HEAD
+      - name: Exercise real feed metadata and Kconfig
+        id: config
+        working-directory: source
+        env:
+          FORCE_UNSAFE_CONFIGURE: 1
+        run: |
+          {
+            python3 ../scripts/firmware.py feeds jdcloud-re-cs-08
+            ./scripts/feeds update -a
+            python3 ../scripts/firmware.py prepare jdcloud-re-cs-08
+            python3 ../scripts/firmware.py install-feeds jdcloud-re-cs-08
+            python3 ../scripts/firmware.py configure jdcloud-re-cs-08
+          } 2>&1 | tee /tmp/re-cs-08-config.log
+      - name: Record validation result
+        if: always()
+        env:
+          CONFIG_OUTCOME: ${{ steps.config.outcome }}
+        run: |
+          mkdir -p /tmp/config-result
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          result = {'outcome':os.environ['CONFIG_OUTCOME'], 'sha':os.environ['GITHUB_SHA'],
+                    'url':f'https://github.com/{os.environ["GITHUB_REPOSITORY"]}/actions/runs/{os.environ["GITHUB_RUN_ID"]}'}
+          Path('/tmp/config-result/re-cs-08-validation.json').write_text(json.dumps(result, indent=2))
+          log = Path('/tmp/re-cs-08-config.log')
+          Path('/tmp/config-result/re-cs-08-validation.log').write_text(log.read_text()[-250000:] if log.exists() else 'Configuration step did not run')
+          PY
+          if git fetch origin ci-diagnostics; then
+            git switch -C ci-diagnostics FETCH_HEAD
+          else
+            git switch --orphan ci-diagnostics
+          fi
+          mkdir -p diagnostics
+          cp /tmp/config-result/* diagnostics/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add diagnostics
+          git commit -m 'Record RE-CS-08 configuration validation'
+          git push origin HEAD:ci-diagnostics

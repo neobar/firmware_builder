@@ -3,7 +3,7 @@
   "openwrt_defaults": [
     "base-files", "ca-bundle", "dropbear", "fstools", "libc", "libgcc",
     "libustream-mbedtls", "logd", "mtd", "netifd", "uci", "uclient-fetch",
-    "urandom-seed", "urngd", "dnsmasq", "firewall4", "nftables",
+    "urandom-seed", "urngd", "dnsmasq", "firewall4", "nftables-json",
     "kmod-nft-offload", "odhcp6c", "odhcpd-ipv6only", "ppp", "ppp-mod-pppoe",
     "procd-ujail", "apk-mbedtls"
   ],

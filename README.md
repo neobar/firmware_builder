@@ -31,6 +31,10 @@ router-tool、samba4、upnp、vantage、wolultra 等额外应用和 Vantage 主�
 基础选包同时恢复为 OpenWrt 的 dnsmasq、mbedTLS 和 apk-mbedtls。
 最终配置及安装 manifest 均禁止非标准 LuCI 应用/主题和常见额外服务。
 
+RE-CS-08 仅更新 packages、luci 两个 feed，并仅安装必要包及其依赖的菜单定义，
+避免无关的 video/Qt、fwknopd 和 squeezelite 菜单循环依赖阻止 Kconfig 配置。
+默认列表中的虚拟包 `nftables` 明确落实为 firewall4 需要的 `nftables-json`。
+
 1. 将本目录全部文件提交到仓库根目录，包含隐藏目录 `.github`。
 2. 在仓库的 **Actions → Build router firmware → Run workflow** 选择设备。
 3. `all` 会分别构建上述四个项目。每项独立运行，单项失败不取消其他设备。同一设备选择的新构建会取消仍在运行的旧构建。

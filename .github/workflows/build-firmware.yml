@@ -105,9 +105,10 @@ jobs:
       - name: Update feeds and apply patches
         working-directory: source
         run: |
+          python3 ../builder/scripts/firmware.py feeds "$DEVICE"
           ./scripts/feeds update -a 2>&1 | tee ../diagnostics/feeds-update.log
           python3 ../builder/scripts/firmware.py prepare "$DEVICE"
-          ./scripts/feeds install -a 2>&1 | tee ../diagnostics/feeds-install.log
+          python3 ../builder/scripts/firmware.py install-feeds "$DEVICE" 2>&1 | tee ../diagnostics/feeds-install.log
           {
             echo "repository=$SOURCE_REPOSITORY"
             echo "revision=$SOURCE_REVISION"

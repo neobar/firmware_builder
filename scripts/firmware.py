@@ -18,6 +18,27 @@ def run(*args):
     subprocess.run(args, check=True)
 
 
+def setup_feeds(device):
+    if device != 'jdcloud-re-cs-08':
+        return
+    path = Path('feeds.conf')
+    source = path if path.exists() else Path('feeds.conf.default')
+    lines = [line for line in source.read_text().splitlines()
+             if len(parts := line.split()) >= 3 and parts[0].startswith('src-')
+             and parts[1] in {'packages', 'luci'}]
+    assert {line.split()[1] for line in lines} == {'packages', 'luci'}
+    path.write_text('\n'.join(lines) + '\n')
+
+
+def install_feeds(device):
+    if device == 'jdcloud-re-cs-08':
+        # Install only package roots and their feed dependencies. Installing every
+        # optional package also imports broken, unrelated Kconfig definitions.
+        run('./scripts/feeds', 'install', *sorted(re_cs_08_roots()))
+    else:
+        run('./scripts/feeds', 'install', '-a')
+
+
 def wireless(name):
     return bool(re.search(
         r'(^|[-_])(wifi|wireless|wpad|hostapd|wpa|iwinfo|mac80211|cfg80211|'
@@ -53,6 +74,14 @@ def prepare(device):
 
 def selected():
     return set(re.findall(r'^CONFIG_PACKAGE_(.+)=[ym]$', Path('.config').read_text(), re.M))
+
+
+def defconfig():
+    result = subprocess.run(['make', 'defconfig'], text=True, stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT)
+    print(result.stdout, end='', flush=True)
+    result.check_returncode()
+    assert 'recursive dependency detected' not in result.stdout, 'Kconfig contains recursive dependencies'
 
 
 def re_cs_08_roots():
@@ -92,13 +121,13 @@ def configure(device):
              '# CONFIG_ALL_KMODS is not set', '# CONFIG_ALL_NONSHARED is not set']
     lines += [f'CONFIG_PACKAGE_{p}=y' for p in REQUIRED]
     Path('.config').write_text('\n'.join(lines) + '\n')
-    run('make', 'defconfig')
+    defconfig()
     if device == 'jdcloud-re-cs-08':
         # Start from OpenWrt roots, not the fork's package defaults. Kconfig
         # selects dependencies of these roots; unrelated default-y packages stay off.
         names = set(re.findall(r'^Package: (.+)$', Path('tmp/.packageinfo').read_text(), re.M))
         Path('.config').write_text(re_cs_08_seed(lines, names))
-        run('make', 'defconfig')
+        defconfig()
         check_re_cs_08(selected())
     if d['no_wifi']:
         # Read all known package names, including unselected defaults.
@@ -109,7 +138,7 @@ def configure(device):
                          if not any(line.startswith(f'CONFIG_PACKAGE_{p}=') for p in disabled))
         Path('.config').write_text(text + '\n' + '\n'.join(
             f'# CONFIG_PACKAGE_{p} is not set' for p in sorted(disabled)) + '\n')
-        run('make', 'defconfig')
+        defconfig()
     config = Path('.config').read_text()
     assert f'CONFIG_TARGET_{d["target"]}_{d["subtarget"]}_DEVICE_{d["profile"]}=y' in config
     for package in REQUIRED:
@@ -142,4 +171,5 @@ def verify(device):
 if __name__ == '__main__':
     action, device = sys.argv[1:]
     assert device in DEVICES
-    {'prepare': prepare, 'configure': configure, 'verify': verify}[action](device)
+    {'feeds': setup_feeds, 'install-feeds': install_feeds, 'prepare': prepare,
+     'configure': configure, 'verify': verify}[action](device)
