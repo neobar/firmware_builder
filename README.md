@@ -15,7 +15,6 @@
 
 Cudy TR3000 v1 使用 OpenWrt U-Boot 的 UBI 分区布局，升级镜像为 `sysupgrade.itb`。Photonicat 使用 RK3568 的一代机型配置，并内置 `pcat-mgr`。
 
-仅构建 BPi-R4 Pro 8X，不构建 4E。
 所有镜像均要求内置 `kmod-nft-tproxy`、`kmod-nft-socket`、`openssh-sftp-server`、`kmod-nft-bridge`、`kmod-tun`、`luci`。
 
 BPi-R4 Pro 禁用无线驱动、无线固件、wpad/hostapd、iw/iwinfo 等相关包，也移除 `mt7988-wo-firmware`。
