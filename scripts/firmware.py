@@ -23,9 +23,7 @@ def required_packages(device):
     return REQUIRED + tuple(DEVICES[device].get('required_packages', ()))
 
 
-def setup_feeds(device):
-    if DEVICES[device]['repository'] not in IMMORTALWRT_REPOSITORIES:
-        return
+def setup_feeds(_device):
     path = Path('feeds.conf')
     source = path if path.exists() else Path('feeds.conf.default')
     lines = [line for line in source.read_text().splitlines()
@@ -36,13 +34,10 @@ def setup_feeds(device):
 
 
 def install_feeds(device):
-    if DEVICES[device]['repository'] in IMMORTALWRT_REPOSITORIES:
-        # Install only package roots and their feed dependencies. Installing every
-        # optional package also imports broken, unrelated Kconfig definitions.
-        packages = re_cs_08_roots() if device == 'jdcloud-re-cs-08' else required_packages(device)
-        run('./scripts/feeds', 'install', *sorted(packages))
-    else:
-        run('./scripts/feeds', 'install', '-a')
+    # Installing every optional package imports unrelated Kconfig definitions.
+    # The feeds script installs dependencies of each selected package.
+    packages = re_cs_08_roots() if device == 'jdcloud-re-cs-08' else required_packages(device)
+    run('./scripts/feeds', 'install', *sorted(packages))
 
 
 def wireless(name):
