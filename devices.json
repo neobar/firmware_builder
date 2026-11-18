@@ -28,12 +28,12 @@
     "revision": "41a0aea338da58c6cdc6c4807e59cc52e2a78f50",
     "target": "mediatek",
     "subtarget": "filogic",
-    "profile": "cudy_tr3000-v1",
+    "profile": "cudy_tr3000-v1-ubootmod",
     "no_wifi": false
   },
   "ariaboard-photonicat": {
-    "repository": "VIKINGYFY/immortalwrt",
-    "revision": "fdb0dfb367bd50bc8773be63d227695bfeaf55d1",
+    "repository": "immortalwrt/immortalwrt",
+    "revision": "c4c69cfede1bd4a28fa01b9079a7eb61ef4fed4a",
     "target": "rockchip",
     "subtarget": "armv8",
     "profile": "ariaboard_photonicat",

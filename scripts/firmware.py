@@ -12,6 +12,7 @@ DEVICES = json.loads((ROOT / 'devices.json').read_text())
 REQUIRED = ('kmod-nft-tproxy', 'kmod-nft-socket', 'openssh-sftp-server',
             'kmod-nft-bridge', 'kmod-tun', 'luci')
 RE_CS_08_POLICY = json.loads((ROOT / 'configs/re-cs-08-packages.json').read_text())
+IMMORTALWRT_REPOSITORIES = {'immortalwrt/immortalwrt', 'VIKINGYFY/immortalwrt'}
 
 
 def run(*args):
@@ -23,7 +24,7 @@ def required_packages(device):
 
 
 def setup_feeds(device):
-    if DEVICES[device]['repository'] != 'VIKINGYFY/immortalwrt':
+    if DEVICES[device]['repository'] not in IMMORTALWRT_REPOSITORIES:
         return
     path = Path('feeds.conf')
     source = path if path.exists() else Path('feeds.conf.default')
@@ -35,7 +36,7 @@ def setup_feeds(device):
 
 
 def install_feeds(device):
-    if DEVICES[device]['repository'] == 'VIKINGYFY/immortalwrt':
+    if DEVICES[device]['repository'] in IMMORTALWRT_REPOSITORIES:
         # Install only package roots and their feed dependencies. Installing every
         # optional package also imports broken, unrelated Kconfig definitions.
         packages = re_cs_08_roots() if device == 'jdcloud-re-cs-08' else required_packages(device)
@@ -55,7 +56,7 @@ def wireless(name):
 
 
 def prepare(device):
-    if DEVICES[device]['repository'] == 'VIKINGYFY/immortalwrt':
+    if DEVICES[device]['repository'] in IMMORTALWRT_REPOSITORIES:
         for patch in sorted((ROOT / 'patches/immortalwrt').glob('*.patch')):
             run('git', 'apply', '--check', str(patch))
             run('git', 'apply', str(patch))

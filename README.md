@@ -10,10 +10,10 @@
 | zbt-z8803be | openwrt/openwrt | mediatek/filogic | zbtlink_zbt-z8803be |
 | gemtek-xr1710g | openwrt/openwrt + PR #26296 | airoha/an7581 | gemtek_xr1710g-ubi |
 | jdcloud-re-cs-08 | VIKINGYFY/immortalwrt，owrt 分支 | qualcommbe/ipq53xx | jdcloud_re-cs-08 |
-| cudy-tr3000 | openwrt/openwrt | mediatek/filogic | cudy_tr3000-v1 |
-| ariaboard-photonicat | VIKINGYFY/immortalwrt，owrt 分支 | rockchip/armv8 | ariaboard_photonicat |
+| cudy-tr3000 | openwrt/openwrt | mediatek/filogic | cudy_tr3000-v1-ubootmod |
+| ariaboard-photonicat | immortalwrt/immortalwrt，master 分支 | rockchip/armv8 | ariaboard_photonicat |
 
-Cudy TR3000 使用标准 v1（R47，原厂分区布局），请按硬件版本和分区布局核对镜像。Photonicat 使用 RK3568 的一代机型配置，并内置 `pcat-mgr`。
+Cudy TR3000 v1 使用 OpenWrt U-Boot 的 UBI 分区布局，升级镜像为 `sysupgrade.itb`。Photonicat 使用 RK3568 的一代机型配置，并内置 `pcat-mgr`。
 
 仅构建 BPi-R4 Pro 8X，不构建 4E。
 所有镜像均要求内置 `kmod-nft-tproxy`、`kmod-nft-socket`、`openssh-sftp-server`、`kmod-nft-bridge`、`kmod-tun`、`luci`。
@@ -56,7 +56,7 @@ RE-CS-08 仅更新 packages、luci 两个 feed，并仅安装必要包及其依�
 
 ## 源码与补丁
 
-使用 VIKINGYFY/immortalwrt 的设备在源码准备阶段应用 `patches/immortalwrt/` 的修复：
+两个 ImmortalWrt 仓库的构建均在源码准备阶段应用 `patches/immortalwrt/` 的修复：
 libffi 3.8.0 的开发文件安装规则与同版本 OpenWrt 一致，不再从旧 target 子目录复制
 内部头文件 `fficonfig.h`；保留正常安装的 `ffi.h`、`ffitarget.h` 和库文件。
 
