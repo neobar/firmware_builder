@@ -1,0 +1,76 @@
+name: Validate libffi staging fix
+on:
+  push:
+    branches: [fix/re-cs-08-libffi]
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install cross build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential gcc-aarch64-linux-gnu qemu-user curl git
+      - name: Verify actual AArch64 library and InstallDev rules
+        id: staging
+        run: |
+          {
+            git init source
+            git -C source remote add origin https://github.com/VIKINGYFY/immortalwrt.git
+            git -C source fetch --depth=1 origin fdb0dfb367bd50bc8773be63d227695bfeaf55d1
+            git -C source checkout --detach FETCH_HEAD
+            cp source/package/libs/libffi/Makefile /tmp/libffi-original.mk
+            (cd source && python3 ../scripts/firmware.py prepare jdcloud-re-cs-08)
+            curl -fL https://github.com/libffi/libffi/releases/download/v3.8.0/libffi-3.8.0.tar.gz -o /tmp/libffi.tar.gz
+            echo '7da3e2d9a171eb0a038f592ecad3ff2bb2550f3496d87b3b29ad0cf4430c0db4  /tmp/libffi.tar.gz' | sha256sum -c
+            tar -xzf /tmp/libffi.tar.gz
+            for patch in source/package/libs/libffi/patches/*.patch; do patch -d libffi-3.8.0 -p1 < "$patch"; done
+            install_dir="$PWD/libffi-install"
+            (cd libffi-3.8.0 && CC=aarch64-linux-gnu-gcc AR=aarch64-linux-gnu-ar RANLIB=aarch64-linux-gnu-ranlib ./configure --srcdir="$PWD" --host=aarch64-openwrt-linux-musl --build="$(gcc -dumpmachine)" --prefix=/usr --disable-docs --disable-multi-os-directory --disable-raw-api --disable-structs && make -j2 && make DESTDIR="$install_dir" install)
+            python3 - <<'PY'
+          from pathlib import Path
+          for name, recipe in [('original',Path('/tmp/libffi-original.mk')),('fixed',Path('source/package/libs/libffi/Makefile'))]:
+              block = recipe.read_text().split('define Build/InstallDev\n',1)[1].split('\nendef',1)[0]
+              header = f'SHELL := /bin/bash\nPKG_INSTALL_DIR := {Path("libffi-install").resolve()}\nPKG_BUILD_DIR := {Path("libffi-3.8.0").resolve()}\nGNU_TARGET_NAME := aarch64-openwrt-linux\nINSTALL_DIR := mkdir -p\nCP := cp -fpR\nSED := sed -i -e\n'
+              Path(f'/tmp/{name}.mk').write_text(header+'define Build/InstallDev\n'+block+'\nendef\ntest:\n\t$(call Build/InstallDev,$(STAGE_DIR))\n')
+          PY
+            if make -f /tmp/original.mk STAGE_DIR="$PWD/stage-original" test; then
+              echo 'Original rule unexpectedly passed'; exit 1
+            fi
+            make -f /tmp/fixed.mk STAGE_DIR="$PWD/stage-fixed" test
+            test -f stage-fixed/usr/include/ffi.h
+            test -f stage-fixed/usr/include/ffitarget.h
+            test ! -f stage-fixed/usr/include/fficonfig.h
+            printf '#include <ffi.h>\nstatic int add(int a,int b){return a+b;}\nint main(void){ffi_cif c;ffi_type *t[]={&ffi_type_sint,&ffi_type_sint};int a=20,b=22;void *v[]={&a,&b};ffi_arg r=0;if(ffi_prep_cif(&c,FFI_DEFAULT_ABI,2,&ffi_type_sint,t)!=FFI_OK)return 1;ffi_call(&c,FFI_FN(add),&r,v);return r!=42;}\n' > /tmp/test-ffi.c
+            aarch64-linux-gnu-gcc /tmp/test-ffi.c -Istage-fixed/usr/include stage-fixed/usr/lib/libffi.a -o /tmp/test-ffi
+            qemu-aarch64 -L /usr/aarch64-linux-gnu /tmp/test-ffi
+            echo 'PASS: old staging failure reproduced, fixed InstallDev passes, AArch64 ffi_call returns 42'
+          } 2>&1 | tee /tmp/libffi-validation.log
+      - name: Record validation result
+        if: always()
+        env:
+          STAGING_OUTCOME: ${{ steps.staging.outcome }}
+        run: |
+          mkdir -p /tmp/libffi-result
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          result={'outcome':os.environ['STAGING_OUTCOME'],'sha':os.environ['GITHUB_SHA'],'url':f'https://github.com/{os.environ["GITHUB_REPOSITORY"]}/actions/runs/{os.environ["GITHUB_RUN_ID"]}'}
+          Path('/tmp/libffi-result/libffi-validation.json').write_text(json.dumps(result,indent=2))
+          log=Path('/tmp/libffi-validation.log')
+          Path('/tmp/libffi-result/libffi-validation.log').write_text(log.read_text()[-200000:] if log.exists() else 'Validation did not run')
+          PY
+          if git fetch origin ci-diagnostics; then git switch -C ci-diagnostics FETCH_HEAD; else git switch --orphan ci-diagnostics; fi
+          mkdir -p diagnostics
+          cp /tmp/libffi-result/* diagnostics/
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add diagnostics
+          git commit -m 'Record libffi AArch64 staging validation'
+          git push origin HEAD:ci-diagnostics

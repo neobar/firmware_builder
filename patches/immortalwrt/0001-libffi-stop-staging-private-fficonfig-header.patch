@@ -1,0 +1,23 @@
+From: neobar <neobar@users.noreply.github.com>
+Subject: [PATCH] libffi: stop staging private fficonfig.h
+
+Match OpenWrt's libffi 3.8.0 package after commit
+2777161847b418286c465a0d788ac11ccf9dd514.
+https://github.com/openwrt/openwrt/commit/2777161847b418286c465a0d788ac11ccf9dd514
+
+fficonfig.h is a private build header, not part of the public installed
+API. Do not assume it exists below a GNU target subdirectory. Public
+ffi.h and ffitarget.h are already copied from PKG_INSTALL_DIR.
+
+--- a/package/libs/libffi/Makefile
++++ b/package/libs/libffi/Makefile
+@@ -75,9 +75,6 @@ define Build/InstallDev
+ 	$(CP) \
+ 		$(PKG_INSTALL_DIR)/usr/include/*.h \
+ 		$(1)/usr/include/
+-	$(CP) \
+-		$(PKG_BUILD_DIR)/$(GNU_TARGET_NAME)*/fficonfig.h \
+-		$(1)/usr/include/
+ endef
+ 
+ define Package/libffi/install

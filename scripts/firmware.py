@@ -50,6 +50,10 @@ def wireless(name):
 
 
 def prepare(device):
+    if device == 'jdcloud-re-cs-08':
+        for patch in sorted((ROOT / 'patches/immortalwrt').glob('*.patch')):
+            run('git', 'apply', '--check', str(patch))
+            run('git', 'apply', str(patch))
     if device == 'gemtek-xr1710g':
         for patch in sorted((ROOT / 'patches/xr1710g').glob('*.patch')):
             run('git', 'apply', '--check', str(patch))

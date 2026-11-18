@@ -47,6 +47,10 @@ RE-CS-08 仅更新 packages、luci 两个 feed，并仅安装必要包及其依�
 
 ## 源码与补丁
 
+RE-CS-08 在源码准备阶段应用 `patches/immortalwrt/` 的修复：
+libffi 3.8.0 的开发文件安装规则与同版本 OpenWrt 一致，不再从旧 target 子目录复制
+内部头文件 `fficonfig.h`；保留正常安装的 `ffi.h`、`ffitarget.h` 和库文件。
+
 源码提交固定在 `devices.json`，设备支持和内核补丁不会跟随分支静默漂移。
 Feeds 按源码中的 `feeds.conf.default` 更新，实际 feed 提交记录在 `source-versions.txt`。
 因此源码固定，但不同日期的 feeds 可能不同；本配置不承诺二进制可复现。
