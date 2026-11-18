@@ -18,8 +18,12 @@ def run(*args):
     subprocess.run(args, check=True)
 
 
+def required_packages(device):
+    return REQUIRED + tuple(DEVICES[device].get('required_packages', ()))
+
+
 def setup_feeds(device):
-    if device != 'jdcloud-re-cs-08':
+    if DEVICES[device]['repository'] != 'VIKINGYFY/immortalwrt':
         return
     path = Path('feeds.conf')
     source = path if path.exists() else Path('feeds.conf.default')
@@ -31,10 +35,11 @@ def setup_feeds(device):
 
 
 def install_feeds(device):
-    if device == 'jdcloud-re-cs-08':
+    if DEVICES[device]['repository'] == 'VIKINGYFY/immortalwrt':
         # Install only package roots and their feed dependencies. Installing every
         # optional package also imports broken, unrelated Kconfig definitions.
-        run('./scripts/feeds', 'install', *sorted(re_cs_08_roots()))
+        packages = re_cs_08_roots() if device == 'jdcloud-re-cs-08' else required_packages(device)
+        run('./scripts/feeds', 'install', *sorted(packages))
     else:
         run('./scripts/feeds', 'install', '-a')
 
@@ -50,7 +55,7 @@ def wireless(name):
 
 
 def prepare(device):
-    if device == 'jdcloud-re-cs-08':
+    if DEVICES[device]['repository'] == 'VIKINGYFY/immortalwrt':
         for patch in sorted((ROOT / 'patches/immortalwrt').glob('*.patch')):
             run('git', 'apply', '--check', str(patch))
             run('git', 'apply', str(patch))
@@ -147,7 +152,7 @@ def configure(device):
              f'CONFIG_TARGET_{d["target"]}_{d["subtarget"]}_DEVICE_{d["profile"]}=y',
              'CONFIG_TARGET_ROOTFS_SQUASHFS=y', 'CONFIG_TARGET_ROOTFS_INITRAMFS=y',
              '# CONFIG_ALL_KMODS is not set', '# CONFIG_ALL_NONSHARED is not set']
-    lines += [f'CONFIG_PACKAGE_{p}=y' for p in REQUIRED]
+    lines += [f'CONFIG_PACKAGE_{p}=y' for p in required_packages(device)]
     Path('.config').write_text('\n'.join(lines) + '\n')
     defconfig()
     if device == 'jdcloud-re-cs-08':
@@ -169,7 +174,7 @@ def configure(device):
         defconfig()
     config = Path('.config').read_text()
     assert f'CONFIG_TARGET_{d["target"]}_{d["subtarget"]}_DEVICE_{d["profile"]}=y' in config
-    for package in REQUIRED:
+    for package in required_packages(device):
         assert f'CONFIG_PACKAGE_{package}=y' in config, f'Missing built-in package: {package}'
     if d['no_wifi']:
         assert not (bad := sorted(p for p in selected() if wireless(p))), f'Wireless packages selected: {bad}'
@@ -188,7 +193,7 @@ def verify(device):
     assert manifests, 'No installed package manifest found'
     for manifest in manifests:
         packages = manifest_packages(manifest)
-        assert not (missing := set(REQUIRED) - packages), f'{manifest}: missing {missing}'
+        assert not (missing := set(required_packages(device)) - packages), f'{manifest}: missing {missing}'
         if device == 'jdcloud-re-cs-08':
             check_re_cs_08(packages)
         if d['no_wifi']:

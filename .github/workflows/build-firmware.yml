@@ -21,6 +21,8 @@ on:
           - zbt-z8803be
           - gemtek-xr1710g
           - jdcloud-re-cs-08
+          - cudy-tr3000
+          - ariaboard-photonicat
 
 permissions:
   contents: read
