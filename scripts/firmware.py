@@ -116,6 +116,30 @@ def check_re_cs_08(packages):
     assert not (bad := packages & forbidden), f'Unexpected optional services: {sorted(bad)}'
 
 
+def manifest_packages(manifest):
+    # Config symbols use base names, but installed packages may carry ABI
+    # suffixes. Follow include/feeds.mk's FormatABISuffix using build metadata;
+    # never strip arbitrary trailing digits or accept a mere name prefix.
+    versions = {}
+    package = None
+    for line in Path('tmp/.packageinfo').read_text().splitlines():
+        key, separator, value = line.partition(':')
+        if separator and key == 'Package':
+            package = value.strip()
+        elif separator and key == 'ABI-Version' and package:
+            versions[package] = value.strip()
+    # Actual staging records take precedence over configure-time metadata.
+    for record in Path('staging_dir').glob('target-*/pkginfo/*.version'):
+        versions[record.stem] = record.read_text().strip()
+    aliases = {}
+    for package, abi in versions.items():
+        if abi and not package.startswith('kmod-'):
+            suffix = ('-' if package[-1].isdigit() else '') + abi
+            aliases[package + suffix] = package
+    names = {line.split()[0] for line in manifest.read_text().splitlines() if line.strip()}
+    return {aliases.get(name, name) for name in names}
+
+
 def configure(device):
     d = DEVICES[device]
     lines = [f'CONFIG_TARGET_{d["target"]}=y',
@@ -163,7 +187,7 @@ def verify(device):
     manifests = list(directory.glob('*.manifest'))
     assert manifests, 'No installed package manifest found'
     for manifest in manifests:
-        packages = {line.split()[0] for line in manifest.read_text().splitlines() if line.strip()}
+        packages = manifest_packages(manifest)
         assert not (missing := set(REQUIRED) - packages), f'{manifest}: missing {missing}'
         if device == 'jdcloud-re-cs-08':
             check_re_cs_08(packages)

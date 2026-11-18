@@ -41,6 +41,11 @@ RE-CS-08 仅更新 packages、luci 两个 feed，并仅安装必要包及其依�
 4. 成功后从该次运行的 **Artifacts** 下载 `firmware-设备名-运行编号`。
 5. `diagnostics-设备名-运行编号` 保存配置、源码及 feed 版本、补丁与日志，保留 14 天。
 
+固件包清单会根据构建元数据将 `libgcc1`、`libustream-mbedtls20201210` 等实际安装名
+映射为配置包名，再执行必需包和精简规则检查；不会使用模糊前缀匹配。
+编译成功后，即使最终校验失败也会保留固件产物，名称以 `unverified` 结尾；
+只有包清单和内核修复检查都通过时，产物名称才以 `verified` 结尾，构建也才报告成功。
+
 支持手动触发；向 main 提交 workflow、设备定义、脚本或补丁变更时，自动构建全部设备。运行不需要额外 secrets，workflow 只申请 `contents: read`。
 以 `[re-cs-08]` 开头的提交只重新构建 RE-CS-08，使用独立并发组，不取消其他设备正在进行的构建。
 固件产物包含 profile 对应镜像、可用的启动文件、manifest 和 sha256sums；不上传 packages 子目录。

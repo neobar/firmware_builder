@@ -40,6 +40,8 @@ jobs:
       devices: ${{ steps.matrix.outputs.devices }}
     steps:
       - uses: actions/checkout@v4
+      - name: Test firmware verification
+        run: python3 -m unittest discover -s tests -v
       - id: matrix
         env:
           DEVICE: ${{ inputs.device || (startsWith(github.event.head_commit.message, '[re-cs-08]') && 'jdcloud-re-cs-08') || 'all' }}
@@ -134,14 +136,19 @@ jobs:
           make download -j8 2>&1 | tee ../diagnostics/download.log
 
       - name: Compile firmware
+        id: compile
         working-directory: source
         run: |
           make -j"$(nproc)" 2>&1 | tee ../diagnostics/build.log || \
             make -j1 V=s 2>&1 | tee ../diagnostics/build-retry.log
 
       - name: Verify kernel fix and firmware packages
+        id: verify
         working-directory: source
         run: |
+          cp .config config.seed ../diagnostics/
+          cp tmp/.packageinfo ../diagnostics/packageinfo.txt
+          cp bin/targets/"$TARGET"/"$SUBTARGET"/{profiles.json,*.manifest} ../diagnostics/
           python3 ../builder/scripts/firmware.py verify "$DEVICE"
           python3 - <<'PY'
           from pathlib import Path
@@ -157,13 +164,12 @@ jobs:
           assert text.index(block) < text.index('nf_flow_table_offload_cmd(')
           print('Verified kernel flush before driver unbind')
           PY
-          cp .config config.seed ../diagnostics/
-          cp bin/targets/"$TARGET"/"$SUBTARGET"/{profiles.json,*.manifest} ../diagnostics/
 
       - name: Upload firmware
+        if: ${{ !cancelled() && steps.compile.outcome == 'success' }}
         uses: actions/upload-artifact@v4
         with:
-          name: firmware-${{ matrix.device }}-${{ github.run_number }}
+          name: firmware-${{ matrix.device }}-${{ github.run_number }}-${{ steps.verify.outcome == 'success' && 'verified' || 'unverified' }}
           path: |
             source/bin/targets/${{ matrix.target }}/${{ matrix.subtarget }}/*
             !source/bin/targets/${{ matrix.target }}/${{ matrix.subtarget }}/packages/**
