@@ -36,7 +36,21 @@ def setup_feeds(_device):
 def install_feeds(device):
     # Installing every optional package imports unrelated Kconfig definitions.
     # The feeds script installs dependencies of each selected package.
-    packages = re_cs_08_roots() if device == 'jdcloud-re-cs-08' else required_packages(device)
+    packages = re_cs_08_roots() if device == 'jdcloud-re-cs-08' else set(required_packages(device))
+    if device == 'ariaboard-photonicat':
+        # Some of this board's defaults are supplied by feeds. Read the upstream
+        # image profile so these packages need no duplicate configuration here.
+        config = DEVICES[device]
+        root = Path.cwd()
+        metadata = subprocess.check_output([
+            'make', '-sr', '--no-print-directory', '-C', f'target/linux/{config["target"]}/image',
+            f'TOPDIR={root}', f'INCLUDE_DIR={root / "include"}', 'DUMP=1',
+            f'SUBTARGET={config["subtarget"]}',
+        ], text=True)
+        profile = f'Target-Profile: DEVICE_{config["profile"]}\n'
+        block = metadata.split(profile, 1)[1].split('Target-Profile:', 1)[0]
+        defaults = re.search(r'^Target-Profile-Packages:[ \t]*(.*)$', block, re.M).group(1).split()
+        packages.update(name for name in defaults if not name.startswith('-'))
     run('./scripts/feeds', 'install', *sorted(packages))
 
 
