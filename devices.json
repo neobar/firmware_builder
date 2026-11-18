@@ -38,7 +38,12 @@
     "subtarget": "armv8",
     "profile": "ariaboard_photonicat",
     "no_wifi": false,
-    "required_packages": ["pcat-mgr"]
+    "required_packages": [
+      "pcat-mgr",
+      "kmod-ath11k-pci",
+      "ath11k-firmware-wcn6855",
+      "luci-proto-modemmanager"
+    ]
   },
   "jdcloud-re-cs-08": {
     "repository": "VIKINGYFY/immortalwrt",

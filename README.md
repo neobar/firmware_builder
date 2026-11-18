@@ -13,7 +13,7 @@
 | cudy-tr3000 | openwrt/openwrt | mediatek/filogic | cudy_tr3000-v1-ubootmod |
 | ariaboard-photonicat | immortalwrt/immortalwrt，master 分支 | rockchip/armv8 | ariaboard_photonicat |
 
-Cudy TR3000 v1 使用 OpenWrt U-Boot 的 UBI 分区布局，升级镜像为 `sysupgrade.itb`。Photonicat 使用 RK3568 的一代机型配置，并内置 `pcat-mgr`。
+Cudy TR3000 v1 使用 OpenWrt U-Boot 的 UBI 分区布局，升级镜像为 `sysupgrade.itb`。Photonicat 使用 RK3568 的一代机型配置，内置 `pcat-mgr`、`kmod-ath11k-pci`、`ath11k-firmware-wcn6855` 和 `luci-proto-modemmanager`。
 
 所有镜像均要求内置 `kmod-nft-tproxy`、`kmod-nft-socket`、`openssh-sftp-server`、`kmod-nft-bridge`、`kmod-tun`、`luci`。
 
