@@ -50,6 +50,6 @@
     "target": "qualcommbe",
     "subtarget": "ipq53xx",
     "profile": "jdcloud_re-cs-08",
-    "no_wifi": false
+    "no_wifi": true
   }
 }

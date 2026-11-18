@@ -18,7 +18,7 @@ Cudy TR3000 v1 使用 OpenWrt U-Boot 的 UBI 分区布局，升级镜像为 `sys
 所有镜像均要求内置 `kmod-nft-tproxy`、`kmod-nft-socket`、`openssh-sftp-server`、`kmod-nft-bridge`、`kmod-tun`、`luci`。
 
 BPi-R4 Pro 禁用无线驱动、无线固件、wpad/hostapd、iw/iwinfo 等相关包，也移除 `mt7988-wo-firmware`。
-为防止选择完整 LuCI 后重新引入无线包，构建时只对 BPi 修改 LuCI Network/Status 的 iwinfo 依赖。
+BPi-R4 Pro 和 RE-CS-08 的构建都会移除 LuCI 网络与状态模块的 iwinfo 依赖。
 LuCI 有线网络、状态和防火墙管理保留；无线状态功能不可用。有线 PHY 固件保留。
 构建在 `make defconfig` 后检查选包，并在编译后检查安装包 manifest；发现残留无线包或缺少指定包即失败。
 
