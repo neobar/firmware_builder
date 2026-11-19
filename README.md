@@ -26,6 +26,7 @@ LuCI 有线网络、状态和防火墙管理保留；无线状态功能不可用
 
 RE-CS-08 使用 `configs/re-cs-08-packages.json` 中的 OpenWrt 默认基础/路由包，
 加上 RE-CS-08 必要的 PPE、PHY、交换端口、存储/启动支持及本项目要求的软件包。
+`mkf2fs` 和 `f2fsck` 提供首次启动初始化持久化存储及后续检查所需的 F2FS 工具。
 配置时显式关闭所有其他包的默认选择，然后由 Kconfig 自动拉取所需依赖，
 避免 ImmortalWrt 的默认插件及其独立服务被带入镜像。
 保留 OpenWrt 标准 LuCI 的 `luci-app-firewall`、`luci-app-package-manager` 和 Bootstrap 主题；
