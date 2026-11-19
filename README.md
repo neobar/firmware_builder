@@ -1,7 +1,5 @@
 # Router firmware builder
 
-为 `neobar/firmware_builder` 准备的 GitHub Actions 全源码固件构建配置。
-
 ## 构建设备
 
 | Actions 选项 | 源码 | Target / Subtarget | 设备 Profile |
