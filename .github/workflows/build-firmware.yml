@@ -28,7 +28,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: firmware-${{ github.workflow }}-${{ github.ref }}-${{ inputs.device || (startsWith(github.event.head_commit.message, '[re-cs-08]') && 'jdcloud-re-cs-08') || (startsWith(github.event.head_commit.message, '[bpi-r4-pro-8x]') && 'bpi-r4-pro-8x') || 'all' }}
+  group: firmware-${{ github.workflow }}-${{ github.ref }}-${{ inputs.device || (startsWith(github.event.head_commit.message, '[re-cs-08]') && 'jdcloud-re-cs-08') || (startsWith(github.event.head_commit.message, '[bpi-r4-pro-8x]') && 'bpi-r4-pro-8x') || (startsWith(github.event.head_commit.message, '[openwrt]') && 'openwrt') || 'all' }}
   cancel-in-progress: true
 
 defaults:
@@ -46,14 +46,19 @@ jobs:
         run: python3 -m unittest discover -s tests -v
       - id: matrix
         env:
-          DEVICE: ${{ inputs.device || (startsWith(github.event.head_commit.message, '[re-cs-08]') && 'jdcloud-re-cs-08') || (startsWith(github.event.head_commit.message, '[bpi-r4-pro-8x]') && 'bpi-r4-pro-8x') || 'all' }}
+          DEVICE: ${{ inputs.device || (startsWith(github.event.head_commit.message, '[re-cs-08]') && 'jdcloud-re-cs-08') || (startsWith(github.event.head_commit.message, '[bpi-r4-pro-8x]') && 'bpi-r4-pro-8x') || (startsWith(github.event.head_commit.message, '[openwrt]') && 'openwrt') || 'all' }}
         run: |
           python3 - <<'PY'
           import json, os
           devices = json.load(open('devices.json'))
           choice = os.environ['DEVICE']
-          assert choice == 'all' or choice in devices
-          selected = devices if choice == 'all' else {choice: devices[choice]}
+          if choice == 'all':
+              selected = devices
+          elif choice == 'openwrt':
+              selected = {device: config for device, config in devices.items()
+                          if config['repository'] == 'openwrt/openwrt'}
+          else:
+              selected = {choice: devices[choice]}
           matrix = {'include': [dict(device=k, **v) for k, v in selected.items()]}
           with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
               output.write('devices=' + json.dumps(matrix) + '\n')

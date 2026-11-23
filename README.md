@@ -50,6 +50,7 @@ RE-CS-08 默认列表中的虚拟包 `nftables` 由 firewall4 需要的 `nftable
 
 支持手动触发；向 main 提交 workflow、设备定义、脚本或补丁变更时，自动构建全部设备。运行不需要额外 secrets，workflow 只申请 `contents: read`。
 以 `[re-cs-08]` 或 `[bpi-r4-pro-8x]` 开头的提交只构建对应设备，各自使用独立并发组。
+以 `[openwrt]` 开头的提交只构建使用 `openwrt/openwrt` 的设备。
 固件产物包含 profile 对应镜像、可用的启动文件、manifest 和 sha256sums；不上传 packages 子目录。
 
 ## 源码与补丁

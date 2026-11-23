@@ -1,7 +1,7 @@
 {
   "bpi-r4-pro-8x": {
     "repository": "openwrt/openwrt",
-    "revision": "41a0aea338da58c6cdc6c4807e59cc52e2a78f50",
+    "revision": "f8145e65458fba52e360bbdb358be42939eb557f",
     "target": "mediatek",
     "subtarget": "filogic",
     "profile": "bananapi_bpi-r4-pro-8x",
@@ -9,7 +9,7 @@
   },
   "zbt-z8803be": {
     "repository": "openwrt/openwrt",
-    "revision": "41a0aea338da58c6cdc6c4807e59cc52e2a78f50",
+    "revision": "f8145e65458fba52e360bbdb358be42939eb557f",
     "target": "mediatek",
     "subtarget": "filogic",
     "profile": "zbtlink_zbt-z8803be",
@@ -17,7 +17,7 @@
   },
   "gemtek-xr1710g": {
     "repository": "openwrt/openwrt",
-    "revision": "41a0aea338da58c6cdc6c4807e59cc52e2a78f50",
+    "revision": "f8145e65458fba52e360bbdb358be42939eb557f",
     "target": "airoha",
     "subtarget": "an7581",
     "profile": "gemtek_xr1710g-ubi",
@@ -25,7 +25,7 @@
   },
   "cudy-tr3000": {
     "repository": "openwrt/openwrt",
-    "revision": "41a0aea338da58c6cdc6c4807e59cc52e2a78f50",
+    "revision": "f8145e65458fba52e360bbdb358be42939eb557f",
     "target": "mediatek",
     "subtarget": "filogic",
     "profile": "cudy_tr3000-v1-ubootmod",
