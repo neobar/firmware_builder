@@ -28,7 +28,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: firmware-${{ github.workflow }}-${{ github.ref }}-${{ inputs.device || (startsWith(github.event.head_commit.message, '[re-cs-08]') && 'jdcloud-re-cs-08') || (startsWith(github.event.head_commit.message, '[bpi-r4-pro-8x]') && 'bpi-r4-pro-8x') || (startsWith(github.event.head_commit.message, '[openwrt]') && 'openwrt') || 'all' }}
+  group: firmware-${{ github.workflow }}-${{ github.ref }}-${{ inputs.device || (startsWith(github.event.head_commit.message, '[re-cs-08]') && 'jdcloud-re-cs-08') || (startsWith(github.event.head_commit.message, '[bpi-r4-pro-8x]') && 'bpi-r4-pro-8x') || (startsWith(github.event.head_commit.message, '[xr1710g]') && 'gemtek-xr1710g') || (startsWith(github.event.head_commit.message, '[openwrt]') && 'openwrt') || 'all' }}
   cancel-in-progress: true
 
 defaults:
@@ -46,7 +46,7 @@ jobs:
         run: python3 -m unittest discover -s tests -v
       - id: matrix
         env:
-          DEVICE: ${{ inputs.device || (startsWith(github.event.head_commit.message, '[re-cs-08]') && 'jdcloud-re-cs-08') || (startsWith(github.event.head_commit.message, '[bpi-r4-pro-8x]') && 'bpi-r4-pro-8x') || (startsWith(github.event.head_commit.message, '[openwrt]') && 'openwrt') || 'all' }}
+          DEVICE: ${{ inputs.device || (startsWith(github.event.head_commit.message, '[re-cs-08]') && 'jdcloud-re-cs-08') || (startsWith(github.event.head_commit.message, '[bpi-r4-pro-8x]') && 'bpi-r4-pro-8x') || (startsWith(github.event.head_commit.message, '[xr1710g]') && 'gemtek-xr1710g') || (startsWith(github.event.head_commit.message, '[openwrt]') && 'openwrt') || 'all' }}
         run: |
           python3 - <<'PY'
           import json, os

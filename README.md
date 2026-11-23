@@ -49,7 +49,7 @@ RE-CS-08 默认列表中的虚拟包 `nftables` 由 firewall4 需要的 `nftable
 只有包清单和内核修复检查都通过时，产物名称才以 `verified` 结尾，构建也才报告成功。
 
 支持手动触发；向 main 提交 workflow、设备定义、脚本或补丁变更时，自动构建全部设备。运行不需要额外 secrets，workflow 只申请 `contents: read`。
-以 `[re-cs-08]` 或 `[bpi-r4-pro-8x]` 开头的提交只构建对应设备，各自使用独立并发组。
+以 `[re-cs-08]`、`[bpi-r4-pro-8x]` 或 `[xr1710g]` 开头的提交只构建对应设备，各自使用独立并发组。
 以 `[openwrt]` 开头的提交只构建使用 `openwrt/openwrt` 的设备。
 固件产物包含 profile 对应镜像、可用的启动文件、manifest 和 sha256sums；不上传 packages 子目录。
 
@@ -80,6 +80,8 @@ Feeds 按源码中的 `feeds.conf.default` 更新，实际 feed 提交记录在 
 
 使用 PR 的 UBI 2.0 布局。首次安装和旧布局迁移请遵循 PR 的硬件安装说明；不要把 sysupgrade 镜像直接用于不兼容的布局。
 该 PR 另行记录了 10GbE PCS/PHY 链路问题；本项目只包含指定 PR 的设备支持，不额外加入实验性 PCS/PHY 补丁。
+
+XR1710G 还应用 [OpenWrt PR #26755](https://github.com/openwrt/openwrt/pull/26755)，修复 Airoha 复位驱动使用未初始化变量的问题。每周上游更新任务会检查该修复是否进入 OpenWrt 主线，确认所选源码已包含修复后移除本地补丁。
 
 ### 长时间 UDP / 硬件卸载修复
 
