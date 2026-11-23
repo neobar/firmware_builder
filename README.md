@@ -14,6 +14,7 @@
 Cudy TR3000 v1 使用 OpenWrt U-Boot 的 UBI 分区布局，升级镜像为 `sysupgrade.itb`。Photonicat 使用 RK3568 的一代机型配置，额外内置 `kmod-ath11k-pci`、`ath11k-firmware-wcn6855` 和 `luci-proto-modemmanager`。
 
 所有镜像均要求内置 `kmod-nft-tproxy`、`kmod-nft-socket`、`openssh-sftp-server`、`kmod-nft-bridge`、`kmod-tun`、`luci`。
+ZBT Z8803BE 额外内置 `bridger`。
 
 BPi-R4 Pro 禁用无线驱动、无线固件、wpad/hostapd、iw/iwinfo 等相关包，也移除 `mt7988-wo-firmware`。
 BPi-R4 Pro 和 RE-CS-08 的构建都会移除 LuCI 网络与状态模块的 iwinfo 依赖。
@@ -49,7 +50,7 @@ RE-CS-08 默认列表中的虚拟包 `nftables` 由 firewall4 需要的 `nftable
 只有包清单和内核修复检查都通过时，产物名称才以 `verified` 结尾，构建也才报告成功。
 
 支持手动触发；向 main 提交 workflow、设备定义、脚本或补丁变更时，自动构建全部设备。运行不需要额外 secrets，workflow 只申请 `contents: read`。
-以 `[re-cs-08]`、`[bpi-r4-pro-8x]` 或 `[xr1710g]` 开头的提交只构建对应设备，各自使用独立并发组。
+以 `[re-cs-08]`、`[bpi-r4-pro-8x]`、`[xr1710g]` 或 `[zbt-z8803be]` 开头的提交只构建对应设备，各自使用独立并发组。
 以 `[openwrt]` 开头的提交只构建使用 `openwrt/openwrt` 的设备。
 固件产物包含 profile 对应镜像、可用的启动文件、manifest 和 sha256sums；不上传 packages 子目录。
 

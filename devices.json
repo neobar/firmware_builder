@@ -13,7 +13,8 @@
     "target": "mediatek",
     "subtarget": "filogic",
     "profile": "zbtlink_zbt-z8803be",
-    "no_wifi": false
+    "no_wifi": false,
+    "required_packages": ["bridger"]
   },
   "gemtek-xr1710g": {
     "repository": "openwrt/openwrt",
