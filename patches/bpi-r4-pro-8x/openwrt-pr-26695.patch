@@ -249,7 +249,7 @@ index a956cc7abdc2b4..79735939d2d580 100644
  +{
 diff --git a/target/linux/generic/pending-6.18/760-04-driver-core-add-device_schedule_reprobe.patch b/target/linux/generic/pending-6.18/760-04-driver-core-add-device_schedule_reprobe.patch
 new file mode 100644
-index 00000000000000..baf34a339a7b3a
+index 00000000000000..aacb7f14ba11e9
 --- /dev/null
 +++ b/target/linux/generic/pending-6.18/760-04-driver-core-add-device_schedule_reprobe.patch
 @@ -0,0 +1,305 @@
@@ -298,11 +298,11 @@ index 00000000000000..baf34a339a7b3a
 +under the device lock, so the helper may be called with the device
 +lock held, as the prepare, suspend, resume and complete callbacks,
 +->remove() and ->shutdown() hold it. The caller is the bound driver, in
-+a context its ->remove() waits for. Buses that take the parent lock to
++a context its ->remove() waits for. Device types that take the parent lock to
 +bind are refused with -EINVAL: that lock has to be taken before @dev's
 +own, so the parent would have to be recorded before either is held,
 +where device_move() can replace it without taking any device lock.
-+usb_bus_type is the only such bus and no caller needs it today.
++USB interfaces require the parent lock and no caller needs it today.
 +
 +While probing is blocked, which device_shutdown() and dpm_prepare() both
 +set before they touch any device, a request that fires is dropped once
@@ -488,7 +488,7 @@ index 00000000000000..baf34a339a7b3a
 ++ * concurrent device_shutdown() overtakes may run ->remove() after
 ++ * ->shutdown(). None of this is specific to this helper.
 ++ *
-++ * Buses that take the parent lock to bind (only usb_bus_type) are refused
+++ * Device types that take the parent lock to bind are refused
 ++ * with -EINVAL: the parent would have to be recorded before either lock
 ++ * is held, where device_move() can replace it.
 ++ *
@@ -499,7 +499,7 @@ index 00000000000000..baf34a339a7b3a
 ++ * cancelled if the probe fails.
 ++ *
 ++ * Returns: 0 on success, -EINVAL if @dev is not a registered device
-++ * bound to a driver or sits on a bus which takes the parent lock to
+++ * bound to a driver or has a device type that takes the parent lock to
 ++ * bind, -EBUSY if a re-probe of @dev is pending or has not yet released
 ++ * the driver, -ENOMEM on allocation failure.
 ++ */
@@ -511,11 +511,11 @@ index 00000000000000..baf34a339a7b3a
 ++
 ++	drv = READ_ONCE(dev->driver);
 ++	/*
-++	 * A bus taking the parent lock would need @dev's parent pinned until
+++	 * Taking the parent lock would need @dev's parent pinned until
 ++	 * the work runs, which device_move() can invalidate.
 ++	 */
-++	if (!drv || !dev->bus || dev->bus->need_parent_lock || !dev->p ||
-++	    dev->p->dead || !device_is_registered(dev))
+++	if (!drv || !dev->bus || (dev->type && dev->type->need_parent_lock) ||
+++	    !dev->p || dev->p->dead || !device_is_registered(dev))
 ++		return -EINVAL;
 ++
 ++	rp = kzalloc_obj(*rp);
