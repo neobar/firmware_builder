@@ -4,7 +4,7 @@
 
 | Actions 选项 | 源码 | Target / Subtarget | 设备 Profile |
 | --- | --- | --- | --- |
-| bpi-r4-pro-8x | openwrt/openwrt | mediatek/filogic | bananapi_bpi-r4-pro-8x |
+| bpi-r4-pro-8x | openwrt/openwrt + PR #26695 | mediatek/filogic | bananapi_bpi-r4-pro-8x |
 | zbt-z8803be | openwrt/openwrt | mediatek/filogic | zbtlink_zbt-z8803be |
 | gemtek-xr1710g | openwrt/openwrt + PR #26296 | airoha/an7581 | gemtek_xr1710g-ubi |
 | jdcloud-re-cs-08 | VIKINGYFY/immortalwrt，owrt 分支 | qualcommbe/ipq53xx | jdcloud_re-cs-08 |
@@ -49,7 +49,7 @@ RE-CS-08 默认列表中的虚拟包 `nftables` 由 firewall4 需要的 `nftable
 只有包清单和内核修复检查都通过时，产物名称才以 `verified` 结尾，构建也才报告成功。
 
 支持手动触发；向 main 提交 workflow、设备定义、脚本或补丁变更时，自动构建全部设备。运行不需要额外 secrets，workflow 只申请 `contents: read`。
-以 `[re-cs-08]` 开头的提交只重新构建 RE-CS-08，使用独立并发组，不取消其他设备正在进行的构建。
+以 `[re-cs-08]` 或 `[bpi-r4-pro-8x]` 开头的提交只构建对应设备，各自使用独立并发组。
 固件产物包含 profile 对应镜像、可用的启动文件、manifest 和 sha256sums；不上传 packages 子目录。
 
 ## 源码与补丁
@@ -62,6 +62,12 @@ libffi 3.8.0 的开发文件安装规则与同版本 OpenWrt 一致，不再从�
 Feeds 按源码中的 `feeds.conf.default` 更新，实际 feed 提交记录在 `source-versions.txt`。
 因此源码固定，但不同日期的 feeds 可能不同；本配置不承诺二进制可复现。
 升级源码提交时须重新检查设备 Profile、内核版本和补丁兼容性。
+
+### BPi-R4 Pro 8X
+
+构建在源码准备阶段应用 `patches/bpi-r4-pro-8x/openwrt-pr-26695.patch`，同步 MxL862xx 有线交换芯片驱动。该变更让驱动在读取交换芯片固件版本后选择 PCS 接口，并更新固件刷写和恢复流程。补丁来源为 [OpenWrt PR #26695](https://github.com/openwrt/openwrt/pull/26695)。
+
+每日任务检查该 PR 是否已合入 OpenWrt 主线。确认合并后，任务会把该设备在 `devices.json` 中的源码更新到包含该修复的官方提交，移除本地补丁及构建中的应用步骤，并触发 8X 构建。
 
 ### XR1710G
 
