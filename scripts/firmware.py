@@ -167,6 +167,7 @@ def configure(device):
              'CONFIG_TARGET_ROOTFS_SQUASHFS=y', 'CONFIG_TARGET_ROOTFS_INITRAMFS=y',
              '# CONFIG_ALL_KMODS is not set', '# CONFIG_ALL_NONSHARED is not set']
     lines += [f'CONFIG_PACKAGE_{p}=y' for p in required_packages(device)]
+    lines += [f'# CONFIG_PACKAGE_{p} is not set' for p in d.get('excluded_packages', ())]
     Path('.config').write_text('\n'.join(lines) + '\n')
     defconfig()
     if device == 'jdcloud-re-cs-08':
@@ -190,6 +191,8 @@ def configure(device):
     assert f'CONFIG_TARGET_{d["target"]}_{d["subtarget"]}_DEVICE_{d["profile"]}=y' in config
     for package in required_packages(device):
         assert f'CONFIG_PACKAGE_{package}=y' in config, f'Missing built-in package: {package}'
+    assert not (excluded := selected().intersection(d.get('excluded_packages', ()))), (
+        f'Excluded packages selected: {sorted(excluded)}')
     if d['no_wifi']:
         assert not (bad := sorted(p for p in selected() if wireless(p))), f'Wireless packages selected: {bad}'
     run('sh', '-c', './scripts/diffconfig.sh > config.seed')
@@ -208,6 +211,8 @@ def verify(device):
     for manifest in manifests:
         packages = manifest_packages(manifest)
         assert not (missing := set(required_packages(device)) - packages), f'{manifest}: missing {missing}'
+        assert not (excluded := packages.intersection(d.get('excluded_packages', ()))), (
+            f'{manifest}: excluded packages present: {sorted(excluded)}')
         if device == 'jdcloud-re-cs-08':
             check_re_cs_08(packages)
         if d['no_wifi']:

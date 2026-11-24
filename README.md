@@ -6,7 +6,7 @@
 | --- | --- | --- | --- |
 | bpi-r4-pro-8x | openwrt/openwrt + PR #26695 | mediatek/filogic | bananapi_bpi-r4-pro-8x |
 | zbt-z8803be | openwrt/openwrt | mediatek/filogic | zbtlink_zbt-z8803be |
-| gemtek-xr1710g | openwrt/openwrt + PR #26296 | airoha/an7581 | gemtek_xr1710g-ubi |
+| gemtek-xr1710g | openwrt/openwrt | airoha/an7581 | gemtek_xr1710g-ubi |
 | jdcloud-re-cs-08 | VIKINGYFY/immortalwrt，owrt 分支 | qualcommbe/ipq53xx | jdcloud_re-cs-08 |
 | cudy-tr3000 | openwrt/openwrt | mediatek/filogic | cudy_tr3000-v1-ubootmod |
 | ariaboard-photonicat | immortalwrt/immortalwrt，master 分支 | rockchip/armv8 | ariaboard_photonicat |
@@ -73,14 +73,9 @@ Feeds 按源码中的 `feeds.conf.default` 更新，实际 feed 提交记录在 
 
 ### XR1710G
 
-内置 [OpenWrt PR #26296](https://github.com/openwrt/openwrt/pull/26296) 的三个固定提交：
+设备树、UBI 2.0 镜像和 U-Boot chainloader 来自 OpenWrt 主线。首次安装和旧布局迁移请遵循 [OpenWrt PR #26296](https://github.com/openwrt/openwrt/pull/26296) 的硬件安装说明，那里也记录了 10GbE PCS/PHY 链路问题。
 
-- `2c26fb74ef25ddf887d1de056a209cdf3d721ac5`：共用 DTSI。
-- `74bf4348b0f5a73206a8afe563805216c1a9e143`：U-Boot chainloader。
-- `1b981abdd1931f7bde8defc2965260572bc6bfec`：设备支持。
-
-使用 PR 的 UBI 2.0 布局。首次安装和旧布局迁移请遵循 PR 的硬件安装说明；不要把 sysupgrade 镜像直接用于不兼容的布局。
-该 PR 另行记录了 10GbE PCS/PHY 链路问题；本项目只包含指定 PR 的设备支持，不额外加入实验性 PCS/PHY 补丁。
+固件内置 `wpad-mbedtls`，替换上游默认的 `wpad-basic-mbedtls`。
 
 XR1710G 还应用 [OpenWrt PR #26755](https://github.com/openwrt/openwrt/pull/26755)，修复 Airoha 复位驱动使用未初始化变量的问题。每周上游更新任务会检查该修复是否进入 OpenWrt 主线，确认所选源码已包含修复后移除本地补丁。
 
@@ -97,6 +92,6 @@ XR1710G 还应用 [OpenWrt PR #26755](https://github.com/openwrt/openwrt/pull/26
 
 ## 验证范围
 
-交付前已验证 workflow 的 actionlint 检查、Python 语法、XR1710G 三个补丁在固定 OpenWrt 提交上的应用、
+交付前已验证 workflow 的 actionlint 检查、Python 语法、XR1710G 补丁在固定 OpenWrt 提交上的应用、
 修复补丁与两套源码已有相关 generic 补丁叠加后的应用、LuCI 无线依赖移除。
 完整 Linux 交叉编译、最终 Kconfig/manifest 检查由首次 Actions 运行完成；静态检查不代表固件已通过实机测试。

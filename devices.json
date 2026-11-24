@@ -18,11 +18,13 @@
   },
   "gemtek-xr1710g": {
     "repository": "openwrt/openwrt",
-    "revision": "f8145e65458fba52e360bbdb358be42939eb557f",
+    "revision": "980a7404d781222674d475d06ff44201760701ff",
     "target": "airoha",
     "subtarget": "an7581",
     "profile": "gemtek_xr1710g-ubi",
-    "no_wifi": false
+    "no_wifi": false,
+    "required_packages": ["wpad-mbedtls"],
+    "excluded_packages": ["wpad-basic-mbedtls"]
   },
   "cudy-tr3000": {
     "repository": "openwrt/openwrt",
