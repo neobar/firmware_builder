@@ -69,7 +69,7 @@ Feeds 按源码中的 `feeds.conf.default` 更新，实际 feed 提交记录在 
 
 构建在源码准备阶段应用 `patches/bpi-r4-pro-8x/openwrt-pr-26695.patch`，同步 MxL862xx 有线交换芯片驱动。该变更让驱动在读取交换芯片固件版本后选择 PCS 接口，并更新固件刷写和恢复流程。补丁来源为 [OpenWrt PR #26695](https://github.com/openwrt/openwrt/pull/26695)。
 
-每日任务检查该 PR 是否已合入 OpenWrt 主线。确认合并后，任务会把该设备在 `devices.json` 中的源码更新到包含该修复的官方提交，移除本地补丁及构建中的应用步骤，并触发 8X 构建。
+每周上游更新任务检查该 PR 是否已合入 OpenWrt 主线。确认合并后，任务会把该设备在 `devices.json` 中的源码更新到包含该修复的官方提交，移除本地补丁及构建中的应用步骤，并触发 8X 构建。
 
 ### XR1710G
 
