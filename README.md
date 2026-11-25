@@ -75,8 +75,6 @@ XR1710G 还应用以下补丁。每周上游更新任务会在确认所选源码
 - [OpenWrt PR #26755](https://github.com/openwrt/openwrt/pull/26755) 修复 Airoha 复位驱动使用未初始化变量的问题。
 - [OpenWrt PR #26929](https://github.com/openwrt/openwrt/pull/26929) 按名称查找 NCT7802，避免向错误的 `hwmon` 设备写入风扇曲线。
 
-`factory` 卷重建保护已随 [OpenWrt PR #26928](https://github.com/openwrt/openwrt/pull/26928) 合入主线。
-
 ### 长时间 UDP / 硬件卸载修复
 
 所有设备加入 [issue #17915 指定评论](https://github.com/openwrt/openwrt/issues/17915#issuecomment-6617121046)
