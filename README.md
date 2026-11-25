@@ -73,8 +73,9 @@ Feeds 按源码中的 `feeds.conf.default` 更新，实际 feed 提交记录在 
 XR1710G 还应用以下补丁。每周上游更新任务会在确认所选源码已包含相应修复后移除本地副本。
 
 - [OpenWrt PR #26755](https://github.com/openwrt/openwrt/pull/26755) 修复 Airoha 复位驱动使用未初始化变量的问题。
-- [OpenWrt PR #26928](https://github.com/openwrt/openwrt/pull/26928) 检查 EEPROM 读取长度，避免用截断的无线校准数据重建 `factory` 卷。
 - [OpenWrt PR #26929](https://github.com/openwrt/openwrt/pull/26929) 按名称查找 NCT7802，避免向错误的 `hwmon` 设备写入风扇曲线。
+
+`factory` 卷重建保护已随 [OpenWrt PR #26928](https://github.com/openwrt/openwrt/pull/26928) 合入主线。
 
 ### 长时间 UDP / 硬件卸载修复
 

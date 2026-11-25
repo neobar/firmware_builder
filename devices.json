@@ -1,7 +1,7 @@
 {
   "bpi-r4-pro-8x": {
     "repository": "openwrt/openwrt",
-    "revision": "ce51f2ff0f34914f9c8d0fee7ef3bf6d2d292d20",
+    "revision": "9285edcb617278c1aa982d917a34460c05f6e5f3",
     "target": "mediatek",
     "subtarget": "filogic",
     "profile": "bananapi_bpi-r4-pro-8x",
@@ -9,7 +9,7 @@
   },
   "zbt-z8803be": {
     "repository": "openwrt/openwrt",
-    "revision": "ce51f2ff0f34914f9c8d0fee7ef3bf6d2d292d20",
+    "revision": "9285edcb617278c1aa982d917a34460c05f6e5f3",
     "target": "mediatek",
     "subtarget": "filogic",
     "profile": "zbtlink_zbt-z8803be",
@@ -24,7 +24,7 @@
   },
   "gemtek-xr1710g": {
     "repository": "openwrt/openwrt",
-    "revision": "ce51f2ff0f34914f9c8d0fee7ef3bf6d2d292d20",
+    "revision": "9285edcb617278c1aa982d917a34460c05f6e5f3",
     "target": "airoha",
     "subtarget": "an7581",
     "profile": "gemtek_xr1710g-ubi",
@@ -38,7 +38,7 @@
   },
   "cudy-tr3000": {
     "repository": "openwrt/openwrt",
-    "revision": "ce51f2ff0f34914f9c8d0fee7ef3bf6d2d292d20",
+    "revision": "9285edcb617278c1aa982d917a34460c05f6e5f3",
     "target": "mediatek",
     "subtarget": "filogic",
     "profile": "cudy_tr3000-v1-ubootmod",
@@ -65,7 +65,7 @@
   },
   "jdcloud-re-cs-08": {
     "repository": "VIKINGYFY/immortalwrt",
-    "revision": "b277ac8f4b6da2486cc987b76081ae333afbb6e3",
+    "revision": "bc07ccd9db5e4331362872553b5f2f6e4c3a40a9",
     "target": "qualcommbe",
     "subtarget": "ipq53xx",
     "profile": "jdcloud_re-cs-08",
