@@ -66,10 +66,6 @@ Feeds 按源码中的 `feeds.conf.default` 更新，实际 feed 提交记录在 
 因此源码固定，但不同日期的 feeds 可能不同；本配置不承诺二进制可复现。
 升级源码提交时须重新检查设备 Profile、内核版本和补丁兼容性。
 
-### BPi-R4 Pro 8X
-
-MxL862xx 有线交换芯片使用 OpenWrt 主线驱动。驱动在读取交换芯片固件版本后选择 PCS 接口，并支持固件刷写和 MCUboot 恢复。该更新由 [OpenWrt PR #26695](https://github.com/openwrt/openwrt/pull/26695) 合入主线。
-
 ### XR1710G
 
 设备树、UBI 2.0 镜像和 U-Boot chainloader 来自 OpenWrt 主线。首次安装和旧布局迁移请遵循 [OpenWrt PR #26296](https://github.com/openwrt/openwrt/pull/26296) 的硬件安装说明，那里也记录了 10GbE PCS/PHY 链路问题。
