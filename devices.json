@@ -1,7 +1,7 @@
 {
   "bpi-r4-pro-8x": {
     "repository": "openwrt/openwrt",
-    "revision": "f8145e65458fba52e360bbdb358be42939eb557f",
+    "revision": "ce51f2ff0f34914f9c8d0fee7ef3bf6d2d292d20",
     "target": "mediatek",
     "subtarget": "filogic",
     "profile": "bananapi_bpi-r4-pro-8x",
@@ -9,34 +9,50 @@
   },
   "zbt-z8803be": {
     "repository": "openwrt/openwrt",
-    "revision": "f8145e65458fba52e360bbdb358be42939eb557f",
+    "revision": "ce51f2ff0f34914f9c8d0fee7ef3bf6d2d292d20",
     "target": "mediatek",
     "subtarget": "filogic",
     "profile": "zbtlink_zbt-z8803be",
     "no_wifi": false,
-    "required_packages": ["bridger"]
+    "required_packages": [
+      "bridger",
+      "wpad-mbedtls"
+    ],
+    "excluded_packages": [
+      "wpad-basic-mbedtls"
+    ]
   },
   "gemtek-xr1710g": {
     "repository": "openwrt/openwrt",
-    "revision": "980a7404d781222674d475d06ff44201760701ff",
+    "revision": "ce51f2ff0f34914f9c8d0fee7ef3bf6d2d292d20",
     "target": "airoha",
     "subtarget": "an7581",
     "profile": "gemtek_xr1710g-ubi",
     "no_wifi": false,
-    "required_packages": ["wpad-mbedtls"],
-    "excluded_packages": ["wpad-basic-mbedtls"]
+    "required_packages": [
+      "wpad-mbedtls"
+    ],
+    "excluded_packages": [
+      "wpad-basic-mbedtls"
+    ]
   },
   "cudy-tr3000": {
     "repository": "openwrt/openwrt",
-    "revision": "f8145e65458fba52e360bbdb358be42939eb557f",
+    "revision": "ce51f2ff0f34914f9c8d0fee7ef3bf6d2d292d20",
     "target": "mediatek",
     "subtarget": "filogic",
     "profile": "cudy_tr3000-v1-ubootmod",
-    "no_wifi": false
+    "no_wifi": false,
+    "required_packages": [
+      "wpad-mbedtls"
+    ],
+    "excluded_packages": [
+      "wpad-basic-mbedtls"
+    ]
   },
   "ariaboard-photonicat": {
     "repository": "immortalwrt/immortalwrt",
-    "revision": "c4c69cfede1bd4a28fa01b9079a7eb61ef4fed4a",
+    "revision": "73bc086a62f951d96e5d7404f04c4d73e141cad2",
     "target": "rockchip",
     "subtarget": "armv8",
     "profile": "ariaboard_photonicat",
@@ -49,7 +65,7 @@
   },
   "jdcloud-re-cs-08": {
     "repository": "VIKINGYFY/immortalwrt",
-    "revision": "fdb0dfb367bd50bc8773be63d227695bfeaf55d1",
+    "revision": "b277ac8f4b6da2486cc987b76081ae333afbb6e3",
     "target": "qualcommbe",
     "subtarget": "ipq53xx",
     "profile": "jdcloud_re-cs-08",

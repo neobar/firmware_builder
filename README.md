@@ -4,7 +4,7 @@
 
 | Actions 选项 | 源码 | Target / Subtarget | 设备 Profile |
 | --- | --- | --- | --- |
-| bpi-r4-pro-8x | openwrt/openwrt + PR #26695 | mediatek/filogic | bananapi_bpi-r4-pro-8x |
+| bpi-r4-pro-8x | openwrt/openwrt | mediatek/filogic | bananapi_bpi-r4-pro-8x |
 | zbt-z8803be | openwrt/openwrt | mediatek/filogic | zbtlink_zbt-z8803be |
 | gemtek-xr1710g | openwrt/openwrt | airoha/an7581 | gemtek_xr1710g-ubi |
 | jdcloud-re-cs-08 | VIKINGYFY/immortalwrt，owrt 分支 | qualcommbe/ipq53xx | jdcloud_re-cs-08 |
@@ -15,6 +15,7 @@ Cudy TR3000 v1 使用 OpenWrt U-Boot 的 UBI 分区布局，升级镜像为 `sys
 
 所有镜像均要求内置 `kmod-nft-tproxy`、`kmod-nft-socket`、`openssh-sftp-server`、`kmod-nft-bridge`、`kmod-tun`、`luci`。
 ZBT Z8803BE 额外内置 `bridger`。
+ZBT Z8803BE、Cudy TR3000 和 Gemtek XR1710G 内置 `wpad-mbedtls`，替换上游默认的 `wpad-basic-mbedtls`。
 
 BPi-R4 Pro 禁用无线驱动、无线固件、wpad/hostapd、iw/iwinfo 等相关包，也移除 `mt7988-wo-firmware`。
 BPi-R4 Pro 和 RE-CS-08 的构建都会移除 LuCI 网络与状态模块的 iwinfo 依赖。
@@ -67,15 +68,11 @@ Feeds 按源码中的 `feeds.conf.default` 更新，实际 feed 提交记录在 
 
 ### BPi-R4 Pro 8X
 
-构建在源码准备阶段应用 `patches/bpi-r4-pro-8x/openwrt-pr-26695.patch`，同步 MxL862xx 有线交换芯片驱动。该变更让驱动在读取交换芯片固件版本后选择 PCS 接口，并更新固件刷写和恢复流程。补丁来源为 [OpenWrt PR #26695](https://github.com/openwrt/openwrt/pull/26695)。
-
-每周上游更新任务检查该 PR 是否已合入 OpenWrt 主线。确认合并后，任务会把该设备在 `devices.json` 中的源码更新到包含该修复的官方提交，移除本地补丁及构建中的应用步骤，并触发 8X 构建。
+MxL862xx 有线交换芯片使用 OpenWrt 主线驱动。驱动在读取交换芯片固件版本后选择 PCS 接口，并支持固件刷写和 MCUboot 恢复。该更新由 [OpenWrt PR #26695](https://github.com/openwrt/openwrt/pull/26695) 合入主线。
 
 ### XR1710G
 
 设备树、UBI 2.0 镜像和 U-Boot chainloader 来自 OpenWrt 主线。首次安装和旧布局迁移请遵循 [OpenWrt PR #26296](https://github.com/openwrt/openwrt/pull/26296) 的硬件安装说明，那里也记录了 10GbE PCS/PHY 链路问题。
-
-固件内置 `wpad-mbedtls`，替换上游默认的 `wpad-basic-mbedtls`。
 
 XR1710G 还应用 [OpenWrt PR #26755](https://github.com/openwrt/openwrt/pull/26755)，修复 Airoha 复位驱动使用未初始化变量的问题。每周上游更新任务会检查该修复是否进入 OpenWrt 主线，确认所选源码已包含修复后移除本地补丁。
 

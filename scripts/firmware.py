@@ -73,10 +73,6 @@ def prepare(device):
         for patch in sorted((ROOT / 'patches/xr1710g').glob('*.patch')):
             run('git', 'apply', '--check', str(patch))
             run('git', 'apply', str(patch))
-    if device == 'bpi-r4-pro-8x':
-        patch = ROOT / 'patches/bpi-r4-pro-8x/openwrt-pr-26695.patch'
-        run('git', 'apply', '--check', str(patch))
-        run('git', 'apply', '--whitespace=nowarn', str(patch))
     target = DEVICES[device]['target']
     makefile = Path(f'target/linux/{target}/Makefile').read_text()
     assert re.search(r'KERNEL_PATCHVER\s*:?=\s*6\.18\b', makefile), 'Revalidate patch for changed kernel'
