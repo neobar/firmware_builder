@@ -74,7 +74,11 @@ MxL862xx 有线交换芯片使用 OpenWrt 主线驱动。驱动在读取交换�
 
 设备树、UBI 2.0 镜像和 U-Boot chainloader 来自 OpenWrt 主线。首次安装和旧布局迁移请遵循 [OpenWrt PR #26296](https://github.com/openwrt/openwrt/pull/26296) 的硬件安装说明，那里也记录了 10GbE PCS/PHY 链路问题。
 
-XR1710G 还应用 [OpenWrt PR #26755](https://github.com/openwrt/openwrt/pull/26755)，修复 Airoha 复位驱动使用未初始化变量的问题。每周上游更新任务会检查该修复是否进入 OpenWrt 主线，确认所选源码已包含修复后移除本地补丁。
+XR1710G 还应用以下补丁。每周上游更新任务会在确认所选源码已包含相应修复后移除本地副本。
+
+- [OpenWrt PR #26755](https://github.com/openwrt/openwrt/pull/26755) 修复 Airoha 复位驱动使用未初始化变量的问题。
+- [OpenWrt PR #26928](https://github.com/openwrt/openwrt/pull/26928) 检查 EEPROM 读取长度，避免用截断的无线校准数据重建 `factory` 卷。
+- [OpenWrt PR #26929](https://github.com/openwrt/openwrt/pull/26929) 按名称查找 NCT7802，避免向错误的 `hwmon` 设备写入风扇曲线。
 
 ### 长时间 UDP / 硬件卸载修复
 
