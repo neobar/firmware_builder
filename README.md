@@ -72,6 +72,7 @@ XR1710G 应用以下补丁。每周上游更新任务会在确认所选源码已
 
 - [OpenWrt PR #26755](https://github.com/openwrt/openwrt/pull/26755) 修复 Airoha 复位驱动使用未初始化变量的问题。
 - [OpenWrt PR #26929](https://github.com/openwrt/openwrt/pull/26929) 按名称查找 NCT7802，避免向错误的 `hwmon` 设备写入风扇曲线。
+- [OpenWrt PR #26673](https://github.com/openwrt/openwrt/pull/26673) 为 AN7581 启用内核 AES 和 GHASH 的 NEON 加速，并内置 EIP93 加密驱动。
 
 ### 长时间 UDP / 硬件卸载修复
 

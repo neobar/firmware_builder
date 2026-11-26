@@ -1,0 +1,48 @@
+diff --git a/target/linux/airoha/an7581/config-6.18 b/target/linux/airoha/an7581/config-6.18
+index 320738b90fd2d3..5ef3d835b025b6 100644
+--- a/target/linux/airoha/an7581/config-6.18
++++ b/target/linux/airoha/an7581/config-6.18
+@@ -76,9 +76,12 @@ CONFIG_CPU_RMAP=y
+ CONFIG_CRC16=y
+ CONFIG_CRC32_ARCH=y
+ CONFIG_CRC_CCITT=y
++CONFIG_CRYPTO_AES_ARM64_BS=y
++CONFIG_CRYPTO_AES_ARM64_NEON_BLK=y
+ CONFIG_CRYPTO_CRC32C=y
+ CONFIG_CRYPTO_DEFLATE=y
+ CONFIG_CRYPTO_ECB=y
++CONFIG_CRYPTO_GHASH_ARM64_CE=y
+ CONFIG_CRYPTO_HASH_INFO=y
+ CONFIG_CRYPTO_LIB_GF128MUL=y
+ CONFIG_CRYPTO_LIB_SHA1=y
+diff --git a/target/linux/airoha/an7581/target.mk b/target/linux/airoha/an7581/target.mk
+index 70f79b4c9efdd3..cb744f3c7c8f8b 100644
+--- a/target/linux/airoha/an7581/target.mk
++++ b/target/linux/airoha/an7581/target.mk
+@@ -6,7 +6,7 @@ KERNELNAME:=Image dtbs
+ FEATURES+=pwm audio
+ 
+ DEFAULT_PACKAGES += \
+-	airoha-en7581-npu-firmware uboot-envtools
++	airoha-en7581-npu-firmware uboot-envtools kmod-crypto-hw-eip93
+ 
+ define Target/Description
+ 	Build firmware images for Airoha an7581 ARM based boards.
+diff --git a/target/linux/airoha/an7583/config-6.18 b/target/linux/airoha/an7583/config-6.18
+index 4132480040be85..fc637955a85d68 100644
+--- a/target/linux/airoha/an7583/config-6.18
++++ b/target/linux/airoha/an7583/config-6.18
+@@ -76,9 +76,13 @@ CONFIG_CPU_RMAP=y
+ CONFIG_CRC16=y
+ CONFIG_CRC32_ARCH=y
+ CONFIG_CRC_CCITT=y
++CONFIG_CRYPTO_AES_ARM64_CE=y
++CONFIG_CRYPTO_AES_ARM64_CE_BLK=y
++CONFIG_CRYPTO_AES_ARM64_CE_CCM=y
+ CONFIG_CRYPTO_CRC32C=y
+ CONFIG_CRYPTO_DEFLATE=y
+ CONFIG_CRYPTO_ECB=y
++CONFIG_CRYPTO_GHASH_ARM64_CE=y
+ CONFIG_CRYPTO_HASH_INFO=y
+ CONFIG_CRYPTO_LIB_GF128MUL=y
+ CONFIG_CRYPTO_LIB_SHA1=y
