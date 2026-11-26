@@ -68,9 +68,7 @@ Feeds 按源码中的 `feeds.conf.default` 更新，实际 feed 提交记录在 
 
 ### XR1710G
 
-设备树、UBI 2.0 镜像和 U-Boot chainloader 来自 OpenWrt 主线。首次安装和旧布局迁移请遵循 [OpenWrt PR #26296](https://github.com/openwrt/openwrt/pull/26296) 的硬件安装说明，那里也记录了 10GbE PCS/PHY 链路问题。
-
-XR1710G 还应用以下补丁。每周上游更新任务会在确认所选源码已包含相应修复后移除本地副本。
+XR1710G 应用以下补丁。每周上游更新任务会在确认所选源码已包含相应修复后移除本地副本。
 
 - [OpenWrt PR #26755](https://github.com/openwrt/openwrt/pull/26755) 修复 Airoha 复位驱动使用未初始化变量的问题。
 - [OpenWrt PR #26929](https://github.com/openwrt/openwrt/pull/26929) 按名称查找 NCT7802，避免向错误的 `hwmon` 设备写入风扇曲线。
